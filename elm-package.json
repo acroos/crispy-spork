@@ -1,8 +1,9 @@
 {
     "version": "1.0.0",
-    "summary": "helpful summary of your project, less than 80 characters",
-    "repository": "https://github.com/user/project.git",
+    "summary": "A tiny site for viewing graphs of population data by country",
+    "repository": "https://github.com/acroos/crispy-spork.git",
     "license": "BSD3",
+    "homepage": "https://acroos.github.io/crispy-spork",
     "source-directories": [
         "src"
     ],
