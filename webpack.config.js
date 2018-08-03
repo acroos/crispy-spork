@@ -26,7 +26,7 @@ module.exports = {
       {
         test:    /\.html$/,
         exclude: /node_modules/,
-        loader:  'file-loader?name=[name].[ext]',
+        loader:  'html-loader',
       },
       {
         test:    /\.elm$/,
