@@ -1,6 +1,6 @@
 module Main exposing (..)
 
-import Commands exposing (fetchPlayers)
+import Commands exposing (fetchCountries, fetchPopulationForCountry)
 import Models exposing (Model, initialModel)
 import Msgs exposing (Msg)
 import Navigation exposing (Location)
@@ -13,8 +13,18 @@ init location =
     let
         currentRoute = 
             Routing.parseLocation location
+        currentCommand =
+            case currentRoute of
+                Models.PopulationRoute country ->
+                    fetchPopulationForCountry country
+
+                Models.CountriesRoute ->
+                    fetchCountries
+                
+                _ ->
+                    Cmd.none
     in
-        ( initialModel currentRoute, fetchPlayers )
+        ( initialModel currentRoute, currentCommand )
 
 subscriptions : Model -> Sub Msg
 subscriptions model =

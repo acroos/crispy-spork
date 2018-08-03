@@ -3,26 +3,36 @@ module Models exposing (..)
 import RemoteData exposing (WebData)
 
 type alias Model =
-    { players : WebData (List Player)
+    { countries : WebData CountryList
+    , populationData : WebData (List PopulationData)
     , route : Route
     }
 
 initialModel : Route -> Model
 initialModel route = 
-    { players = RemoteData.Loading
+    { countries = RemoteData.Loading
+    , populationData = RemoteData.Loading
     , route = route
     }
 
-type alias PlayerId =
+type alias CountryName =
     String
 
-type alias Player =
-    { id : PlayerId
-    , name : String
-    , level : Int
+type alias CountryList =
+    { countries : List CountryName
+    }
+
+type alias PopulationData =
+    {
+        females : Int,
+        country : CountryName,
+        age : Int,
+        males : Int,
+        year : Int,
+        total : Int
     }
 
 type Route
-    = PlayersRoute
-    | PlayerRoute PlayerId
+    = CountriesRoute
+    | PopulationRoute CountryName
     | NotFoundRoute

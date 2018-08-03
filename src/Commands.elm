@@ -3,60 +3,67 @@ module Commands exposing (..)
 import Http
 import Json.Decode as Decode
 import Json.Decode.Pipeline exposing (decode, required)
-import Json.Encode as Encode
 import Msgs exposing (Msg)
-import Models exposing (PlayerId, Player)
+import Models exposing (CountryList, PopulationData, CountryName)
 import RemoteData
 
-fetchPlayers : Cmd Msg
-fetchPlayers = 
-    Http.get fetchPlayersUrl playersDecoder
-        |> RemoteData.sendRequest
-        |> Cmd.map Msgs.OnFetchPlayers
-
-fetchPlayersUrl : String
-fetchPlayersUrl =
-    "http://localhost:4000/players"
-
-playersDecoder : Decode.Decoder (List Player)
-playersDecoder = 
-    Decode.list playerDecoder
-
-playerDecoder : Decode.Decoder Player
-playerDecoder = 
-    decode Player
-        |> required "id" Decode.string
-        |> required "name" Decode.string
-        |> required "level" Decode.int
-
-savePlayerUrl : PlayerId -> String
-savePlayerUrl playerId = 
-    "http://localhost:4000/players/" ++ playerId
-
-savePlayerRequest : Player -> Http.Request Player
-savePlayerRequest player = 
-    Http.request
-        { body = playerEncoder player |> Http.jsonBody 
-        , expect = Http.expectJson playerDecoder
-        , headers = []
-        , method = "PATCH"
-        , timeout = Nothing
-        , url = savePlayerUrl player.id
-        , withCredentials = False
-        }
-
-savePlayerCmd : Player -> Cmd Msg
-savePlayerCmd player =
-    savePlayerRequest player
-        |> Http.send Msgs.OnPlayerSave
-
-playerEncoder : Player -> Encode.Value
-playerEncoder player =
+fetchCountries : Cmd Msg
+fetchCountries =
     let
-        attributes = 
-            [ ( "id", Encode.string player.id )
-            , ("name", Encode.string player.name)
-            , ("level", Encode.int player.level)
-            ]
+        request = 
+        Http.request
+            { body = Http.emptyBody
+            , headers = [Http.header "Accept" "application/json"]
+            , method = "GET"
+            , timeout = Nothing
+            , url = fetchCountriesUrl
+            , withCredentials = False
+            , expect = Http.expectJson countriesDecoder
+            }
     in
-        Encode.object attributes
+        RemoteData.sendRequest request
+        |> Cmd.map Msgs.OnFetchCountries
+
+fetchCountriesUrl : String
+fetchCountriesUrl = 
+    "http://api.population.io/1.0/countries"
+
+countriesDecoder : Decode.Decoder CountryList
+countriesDecoder =
+    decode CountryList
+        |> required "countries" (Decode.list Decode.string)
+
+fetchPopulationForCountry : CountryName -> Cmd Msg
+fetchPopulationForCountry country =
+    let
+        request = 
+        Http.request
+            { body = Http.emptyBody
+            , headers = [Http.header "Accept" "application/json"]
+            , method = "GET"
+            , timeout = Nothing
+            , url = fetchPopulationDataUrl country
+            , withCredentials = False
+            , expect = Http.expectJson populationDataListDecoder
+            }
+    in
+        RemoteData.sendRequest request
+        |> Cmd.map Msgs.OnFetchPopulationData
+
+fetchPopulationDataUrl : CountryName -> String
+fetchPopulationDataUrl country = 
+    "http://api.population.io/1.0/population/2018/" ++ country
+
+populationDataDecoder : Decode.Decoder PopulationData
+populationDataDecoder =
+    decode PopulationData
+        |> required "females" Decode.int
+        |> required "country" Decode.string
+        |> required "age" Decode.int
+        |> required "males" Decode.int
+        |> required "year" Decode.int
+        |> required "total" Decode.int
+
+populationDataListDecoder : Decode.Decoder (List PopulationData)
+populationDataListDecoder =
+    Decode.list populationDataDecoder
