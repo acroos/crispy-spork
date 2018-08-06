@@ -2,7 +2,6 @@ module Countries.List exposing (..)
 
 import Html exposing (..)
 import Html.Attributes exposing (class, href)
--- import Html.Events exposing (onClick)
 import Msgs exposing (Msg)
 import Models exposing (CountryList, CountryName)
 import RemoteData exposing (WebData)

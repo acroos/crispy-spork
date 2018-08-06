@@ -21,7 +21,7 @@ parseLocation location =
             route
         
         Nothing ->
-            NotFoundRoute
+            CountriesRoute
 
 countriesPath : String
 countriesPath =
