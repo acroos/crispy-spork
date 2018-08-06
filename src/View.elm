@@ -23,10 +23,4 @@ page model =
             Countries.PopulationGraph.view model.populationData
 
         Models.NotFoundRoute ->
-            notFoundView
-    
-notFoundView : Html msg
-notFoundView =
-    div []
-        [ text "Not found"
-        ]
+            Countries.List.view model.countries

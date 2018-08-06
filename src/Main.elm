@@ -20,9 +20,6 @@ init location =
 
                 Models.CountriesRoute ->
                     fetchCountries
-                
-                _ ->
-                    Cmd.none
     in
         ( initialModel currentRoute, currentCommand )
 

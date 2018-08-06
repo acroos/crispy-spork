@@ -35,4 +35,3 @@ type alias PopulationData =
 type Route
     = CountriesRoute
     | PopulationRoute CountryName
-    | NotFoundRoute
