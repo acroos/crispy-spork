@@ -38,7 +38,7 @@ maybeGraph response =
             Html.text "Loading..."
         
         RemoteData.Success populationData ->
-            graph (List.map (\d -> (d.age, d.total)) populationData)
+            graph populationData
 
         RemoteData.Failure error ->
             Html.text (toString error)
@@ -55,64 +55,114 @@ padding : Float
 padding = 
     80
 
-xScale : ContinuousScale
-xScale =
-    Scale.linear ( 0, 100 ) ( 0, w - 2 * padding )
+maxTotalValue : List PopulationData -> Float
+maxTotalValue list =
+    let
+        totalList = (List.map (\d -> (toFloat d.total)) list)
+    in
+        maxWithDefault totalList 100000.0
 
-yScale : List ( Int, Int ) -> ContinuousScale
+maxWithDefault : List Float -> Float -> Float
+maxWithDefault list default =
+    case(List.maximum list) of
+        Just number ->
+            number
+        
+        Nothing ->
+            default
+
+xScale : List PopulationData -> ContinuousScale
+xScale list =
+    Scale.linear ( 0, toFloat <| List.length <| list ) ( 0, w - 2 * padding )
+
+yScale : List PopulationData -> ContinuousScale
 yScale list =
     let
-        maxY =
-            case (List.maximum(List.map Tuple.second list)) of
-                Just number ->
-                    (toFloat number)
-                
-                Nothing ->
-                    100000.0
+        maxY = (maxTotalValue list)
 
     in
         Scale.linear ( 0, maxY ) ( h - (2 * padding), 0 )
 
-xAxis : List ( Int, Int ) -> Svg msg
+xAxis : List PopulationData -> Svg msg
 xAxis list =
     Axis.axis { defaultOptions | orientation = Axis.Bottom }
-         (xScale)
+         (xScale list)
 
-yAxis : List ( Int, Int ) -> Svg msg
+yAxis : List PopulationData -> Svg msg
 yAxis list =
     Axis.axis { defaultOptions | orientation = Axis.Left, tickCount = 20 } (yScale list)
 
-column : ContinuousScale -> ContinuousScale -> ( Int, Int ) -> Svg msg
-column xScale yScale ( age, count ) =
-    g [ Svg.Attributes.class "column" ]
+columnDataText : PopulationData -> Svg msg
+columnDataText data =
+    let
+        text = "Age: " ++ (toString data.age)
+            ++ "Females: " ++ (toString data.females)
+            ++ "Males: " ++ (toString data.males)
+            ++ "Total: " ++ (toString data.total)
+    in
+        Svg.text text
+
+maleColumn : ContinuousScale -> ContinuousScale -> PopulationData -> Svg msg
+maleColumn xScale yScale data =
+    g [ class "male-column" ]
         [ rect
-            [ x <| toString <| Scale.convert xScale (toFloat age)
-            , y <| toString <| Scale.convert yScale (toFloat count)
+            [ x <| toString <| Scale.convert xScale <| toFloat <| data.age
+            , y <| toString <| Scale.convert yScale <| toFloat <| data.males
             , width <| toString <| (w - (2 * padding)) / 100 
-            , height <| toString <| h - Scale.convert yScale (toFloat count) - 2 * padding
+            , height <| toString <| h - Scale.convert yScale (toFloat data.males) - 2 * padding
+            ]
+            []
+        ]
+
+femaleColumn : ContinuousScale -> ContinuousScale -> PopulationData -> Svg msg
+femaleColumn xScale yScale data =
+    g [ class "female-column" ]
+        [ rect
+            [ x <| toString <| Scale.convert xScale <| toFloat <| data.age
+            , y <| toString <| Scale.convert yScale <| toFloat <| (data.males + data.females)
+            , width <| toString <| (w - (2 * padding)) / 100 
+            , height <| toString <| h - Scale.convert yScale (toFloat data.females) - 2 * padding
+            ]
+            []
+        ]
+
+column : ContinuousScale -> ContinuousScale -> PopulationData -> Svg msg
+column xScale yScale data =
+    g [ class "column" ]
+        [ rect
+            [ x <| toString <| Scale.convert xScale <| toFloat <| data.age
+            , y <| toString <| Scale.convert yScale <| toFloat <| data.total
+            , width <| toString <| (w - (2 * padding)) / 100 
+            , height <| toString <| h - Scale.convert yScale (toFloat data.total) - 2 * padding
             ]
             []
         , text_
-            [ x <| toString <| Scale.convert xScale (toFloat age)
-            , y <| toString <| Scale.convert yScale (toFloat count)
+            [ x <| toString <| Scale.convert xScale (toFloat data.age)
+            , y <| toString <| Scale.convert yScale (toFloat data.total)
             , textAnchor "middle"
             ]
-            [ Svg.text <| toString count ]
+            [ columnDataText data ]
         ]
 
-graph : List ( Int, Int ) -> Svg Msg
+graph : List PopulationData -> Svg Msg
 graph model =
     svg [ Svg.Attributes.width (toString w ++ "px"), Svg.Attributes.height (toString h ++ "px") ]
         [ Svg.style [] [ Svg.text """
-            .column rect { fill: rgba(118, 214, 78, 0.8); }
+            .male-column rect { fill: rgba(0, 0, 255, 0.8); }
+            .female-column rect { fill: rgba(255, 192, 203, 0.8); }
+            .column rect { fill: rgba(255, 255, 255, 0.1); }
             .column text { display: none; }
-            .column:hover rect { fill: rgb(118, 214, 78); }
+            .column:hover rect { fill: rgb(255, 255, 255, 0.3); }
             .column:hover text { display: inline; }
           """ ]
         , g [ transform ("translate(" ++ toString (padding - 1) ++ ", " ++ toString (h - padding) ++ ")") ]
             [ xAxis model ]
         , g [ transform ("translate(" ++ toString (padding - 1) ++ ", " ++ toString padding ++ ")") ]
             [ yAxis model ]
-        , g [ transform ("translate(" ++ toString padding ++ ", " ++ toString padding ++ ")"), Svg.Attributes.class "series" ] <|
-            List.map (column xScale (yScale model)) model
+        , g [ transform ("translate(" ++ toString padding ++ ", " ++ toString padding ++ ")"), Svg.Attributes.class "series" ] 
+            (List.map (maleColumn (xScale model) (yScale model)) model)
+        , g [ transform ("translate(" ++ toString padding ++ ", " ++ toString padding ++ ")"), Svg.Attributes.class "series" ] 
+            (List.map (femaleColumn (xScale model) (yScale model)) model)
+        , g [ transform ("translate(" ++ toString padding ++ ", " ++ toString padding ++ ")"), Svg.Attributes.class "series" ] 
+            (List.map (column (xScale model) (yScale model)) model)
         ]
