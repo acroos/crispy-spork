@@ -10,7 +10,7 @@ module.exports = {
   mode: "production",
 
   output: {
-    path: path.resolve(__dirname + '/public'),
+    path: path.resolve(__dirname + '/dist'),
     filename: '[name].js',
   },
 
@@ -26,7 +26,7 @@ module.exports = {
       {
         test:    /\.html$/,
         exclude: /node_modules/,
-        loader:  'html-loader',
+        loader:  'file-loader?name=[name].[ext]',
       },
       {
         test:    /\.elm$/,

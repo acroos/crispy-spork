@@ -1,3 +1,4 @@
+require('./index.html');
 import { Main } from './Main.elm';
 var mountNode = document.getElementById('main');
 
