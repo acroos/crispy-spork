@@ -1,7 +1,7 @@
 module Countries.PopulationGraph exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, href)
+import Html.Attributes exposing (href)
 import Msgs exposing (Msg)
 import Models exposing (CountryName, PopulationData)
 import RemoteData exposing (WebData)
@@ -20,15 +20,12 @@ view response =
 
 nav : Html Msg
 nav = 
-    div [ Html.Attributes.class "clearfix mb2 white bg-black" ]
-        [ listBtn ]
+    div [ ] [ listBtn ]
 
 listBtn : Html Msg
 listBtn =
     Html.a
-        [ Html.Attributes.class "btn regular"
-        , href countriesPath
-        ]
+        [ href countriesPath ]
         [ Html.text "< Back" ]
 
 maybeGraph : WebData (List PopulationData) -> Svg Msg

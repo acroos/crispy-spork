@@ -1,7 +1,7 @@
 module Countries.PopulationData exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, href)
+import Html.Attributes exposing (href)
 import Msgs exposing (Msg)
 import Models exposing (CountryName, PopulationData)
 import RemoteData exposing (WebData)
@@ -16,15 +16,12 @@ view response =
     
 nav : Html Msg
 nav = 
-    div [ class "clearfix mb2 white bg-black" ]
-        [ listBtn ]
+    div [ ] [ listBtn ]
 
 listBtn : Html Msg
 listBtn =
     a
-        [ class "btn regular"
-        , href countriesPath
-        ]
+        [  href countriesPath ]
         [ text "< Back" ]
 
 maybeTable : WebData (List PopulationData) -> Html Msg
@@ -44,7 +41,7 @@ maybeTable response =
 
 dataTable : List PopulationData -> Html Msg
 dataTable listPopulationData =
-    div [ class "p2" ]
+    div [ ]
         [ table []
             [ thead []
                 [ tr []

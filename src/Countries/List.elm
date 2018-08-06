@@ -1,7 +1,7 @@
 module Countries.List exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (class, href)
+import Html.Attributes exposing (href)
 import Msgs exposing (Msg)
 import Models exposing (CountryList, CountryName)
 import RemoteData exposing (WebData)
@@ -16,8 +16,8 @@ view response =
     
 nav : Html Msg
 nav = 
-    div [ class "clearfix mb2 white bg-black" ]
-        [ div [ class "left p2" ] [ text "Countries" ] ]
+    div [ ]
+        [ div [ ] [ text "Countries" ] ]
 
 maybeList : WebData CountryList -> Html Msg
 maybeList response =
@@ -36,7 +36,7 @@ maybeList response =
 
 list : List CountryName -> Html Msg
 list countries =
-    div [ class "p2" ]
+    div [ ]
         [ ul []
             (
                 countries
