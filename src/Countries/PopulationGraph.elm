@@ -92,15 +92,23 @@ yAxis : List PopulationData -> Svg msg
 yAxis list =
     Axis.axis { defaultOptions | orientation = Axis.Left, tickCount = 20 } (yScale list)
 
-columnDataText : PopulationData -> Svg msg
-columnDataText data =
-    let
-        text = "Age: " ++ (toString data.age)
-            ++ "Females: " ++ (toString data.females)
-            ++ "Males: " ++ (toString data.males)
-            ++ "Total: " ++ (toString data.total)
-    in
-        Svg.text text
+toCommaString : String -> String
+toCommaString str =
+  let
+    len = String.length str
+  in
+    if len < 4 then
+      str
+    else
+      (toCommaString (String.slice 0 (len - 3) str)) ++ "," ++ (String.right 3 str)
+
+columnDataText : PopulationData -> Float -> List (Svg msg)
+columnDataText data xPosition =
+    [ tspan [ x (toString  xPosition), dy "0.9em" ] [ Svg.text ("Age: " ++ (toString data.age)) ]
+    , tspan [ x (toString  xPosition), dy "0.9em" ] [ Svg.text ("Females: " ++ (toCommaString (toString data.females))) ]
+    , tspan [ x (toString  xPosition), dy "0.9em" ] [ Svg.text ("Males: " ++ (toCommaString (toString data.males))) ]
+    , tspan [ x (toString  xPosition), dy "0.9em" ] [ Svg.text ("Total: " ++ (toCommaString (toString data.total))) ]
+    ]
 
 maleColumn : ContinuousScale -> ContinuousScale -> PopulationData -> Svg msg
 maleColumn xScale yScale data =
@@ -128,20 +136,31 @@ femaleColumn xScale yScale data =
 
 column : ContinuousScale -> ContinuousScale -> PopulationData -> Svg msg
 column xScale yScale data =
+    let
+        xPosition =
+            data.age
+            |> toFloat
+            |> (Scale.convert xScale)
+        yPosition =
+            data.total
+            |> toFloat
+            |> (Scale.convert yScale)
+    in
+        
     g [ class "column" ]
         [ rect
-            [ x <| toString <| Scale.convert xScale <| toFloat <| data.age
-            , y <| toString <| Scale.convert yScale <| toFloat <| data.total
+            [ x <| (toString xPosition)
+            , y <| (toString yPosition)
             , width <| toString <| (w - (2 * padding)) / 100 
             , height <| toString <| h - Scale.convert yScale (toFloat data.total) - 2 * padding
             ]
             []
         , text_
-            [ x <| toString <| Scale.convert xScale (toFloat data.age)
-            , y <| toString <| Scale.convert yScale (toFloat data.total)
+            [ x <| (toString xPosition)
+            , y <| (toString (yPosition - padding))
             , textAnchor "middle"
             ]
-            [ columnDataText data ]
+            (columnDataText data xPosition)
         ]
 
 graph : List PopulationData -> Svg Msg
