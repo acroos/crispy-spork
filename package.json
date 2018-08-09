@@ -19,6 +19,7 @@
   },
   "scripts": {
     "build": "webpack",
-    "start": "webpack && node server.js"
+    "start": "webpack && node server.js",
+    "test": "elm test"
   }
 }
