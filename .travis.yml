@@ -6,7 +6,6 @@ cache:
     - test/elm-stuff/build-artifacts
     - test/elm-stuff/packages
 script: 
-  - yarn test
   - yarn build
 deploy:
   provider: elasticbeanstalk
