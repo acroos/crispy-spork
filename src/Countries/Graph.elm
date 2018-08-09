@@ -139,9 +139,9 @@ graph : List PopulationData -> Svg Msg
 graph model =
     svg [ Svg.Attributes.width (toString w ++ "px"), Svg.Attributes.height (toString h ++ "px") ]
         [ Svg.style [] [ Svg.text """
-            .male-column rect { fill: rgba(0, 0, 255, 0.8); }
-            .female-column rect { fill: rgba(255, 192, 203, 0.8); }
-            .column rect { fill: rgba(255, 255, 255, 0.1); }
+            .male-column rect { fill: rgb(0, 0, 255); }
+            .female-column rect { fill: rgb(255, 192, 203); }
+            .column rect { fill: rgba(255, 255, 255, 0.0); }
             .column text { display: none; }
             .column:hover rect { fill: rgb(255, 255, 255, 0.3); }
             .column:hover text { display: inline; }
