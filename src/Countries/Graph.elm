@@ -1,32 +1,14 @@
-module Countries.PopulationGraph exposing (..)
+module Countries.Graph exposing (maybeGraph)
 
 import Html exposing (..)
-import Html.Attributes exposing (href)
 import Msgs exposing (Msg)
 import Models exposing (CountryName, PopulationData)
 import RemoteData exposing (WebData)
-import Routing exposing (countriesPath)
+import Shared.Utils.StringUtils exposing (toCommaString)
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 import Visualization.Axis as Axis exposing (defaultOptions)
 import Visualization.Scale as Scale exposing (ContinuousScale)
-
-view : WebData (List PopulationData) -> Html Msg
-view response =
-    div []
-        [ nav
-        , maybeGraph response
-        ]
-
-nav : Html Msg
-nav = 
-    div [ ] [ listBtn ]
-
-listBtn : Html Msg
-listBtn =
-    Html.a
-        [ href countriesPath ]
-        [ Html.text "< Back" ]
 
 maybeGraph : WebData (List PopulationData) -> Svg Msg
 maybeGraph response =
@@ -92,16 +74,6 @@ yAxis : List PopulationData -> Svg msg
 yAxis list =
     Axis.axis { defaultOptions | orientation = Axis.Left, tickCount = 20 } (yScale list)
 
-toCommaString : String -> String
-toCommaString str =
-  let
-    len = String.length str
-  in
-    if len < 4 then
-      str
-    else
-      (toCommaString (String.slice 0 (len - 3) str)) ++ "," ++ (String.right 3 str)
-
 columnDataText : PopulationData -> Float -> List (Svg msg)
 columnDataText data xPosition =
     [ tspan [ x (toString  xPosition), dy "0.9em" ] [ Svg.text ("Age: " ++ (toString data.age)) ]
@@ -112,7 +84,7 @@ columnDataText data xPosition =
 
 maleColumn : ContinuousScale -> ContinuousScale -> PopulationData -> Svg msg
 maleColumn xScale yScale data =
-    g [ class "male-column" ]
+    g [ Svg.Attributes.class "male-column" ]
         [ rect
             [ x <| toString <| Scale.convert xScale <| toFloat <| data.age
             , y <| toString <| Scale.convert yScale <| toFloat <| data.males
@@ -124,7 +96,7 @@ maleColumn xScale yScale data =
 
 femaleColumn : ContinuousScale -> ContinuousScale -> PopulationData -> Svg msg
 femaleColumn xScale yScale data =
-    g [ class "female-column" ]
+    g [ Svg.Attributes.class "female-column" ]
         [ rect
             [ x <| toString <| Scale.convert xScale <| toFloat <| data.age
             , y <| toString <| Scale.convert yScale <| toFloat <| (data.males + data.females)
@@ -147,7 +119,7 @@ column xScale yScale data =
             |> (Scale.convert yScale)
     in
         
-    g [ class "column" ]
+    g [ Svg.Attributes.class "column" ]
         [ rect
             [ x <| (toString xPosition)
             , y <| (toString yPosition)
@@ -158,7 +130,7 @@ column xScale yScale data =
         , text_
             [ x <| (toString xPosition)
             , y <| (toString (yPosition - padding))
-            , textAnchor "middle"
+            , textAnchor "left"
             ]
             (columnDataText data xPosition)
         ]

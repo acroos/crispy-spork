@@ -11,7 +11,7 @@ matchers =
         [ map CountriesRoute top
         , map CountriesRoute (s "countries")
         , map CountriesRoute (s "countries/")
-        , map PopulationRoute (s "countries" </> string)
+        , map CountryRoute (s "countries" </> string)
         ]
 
 parseLocation : Location -> Route

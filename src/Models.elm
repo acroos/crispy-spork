@@ -6,6 +6,7 @@ type alias Model =
     { countries : WebData CountryList
     , populationData : WebData (List PopulationData)
     , route : Route
+    , showGraph : Bool
     }
 
 initialModel : Route -> Model
@@ -13,6 +14,7 @@ initialModel route =
     { countries = RemoteData.Loading
     , populationData = RemoteData.Loading
     , route = route
+    , showGraph = True
     }
 
 type alias CountryName =
@@ -34,4 +36,4 @@ type alias PopulationData =
 
 type Route
     = CountriesRoute
-    | PopulationRoute CountryName
+    | CountryRoute CountryName

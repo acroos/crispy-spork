@@ -4,12 +4,11 @@ import Html exposing (Html, div, text)
 import Msgs exposing (Msg)
 import Models exposing (Model)
 import Countries.List
-import Countries.PopulationGraph
+import Countries.Show
 
 view : Model -> Html Msg
 view model = 
-    div []
-        [ page model ]
+    page model
 
 page : Model -> Html Msg
 page model = 
@@ -17,5 +16,5 @@ page model =
         Models.CountriesRoute ->
             Countries.List.view model.countries
 
-        Models.PopulationRoute country ->
-            Countries.PopulationGraph.view model.populationData
+        Models.CountryRoute country ->
+            Countries.Show.view model.populationData model.showGraph

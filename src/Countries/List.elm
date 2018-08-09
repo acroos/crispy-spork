@@ -1,23 +1,20 @@
 module Countries.List exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (href)
+import Html.Attributes exposing (class, href)
 import Msgs exposing (Msg)
 import Models exposing (CountryList, CountryName)
 import RemoteData exposing (WebData)
 import Routing exposing (countryPath)
+import Shared.Views.Container exposing (container)
+import Shared.Views.Nav exposing (navbar)
 
 view : WebData CountryList -> Html Msg
 view response =
     div []
-        [ nav
-        , maybeList response
+        [ navbar
+        , container [ maybeList response ]
         ]
-    
-nav : Html Msg
-nav = 
-    div [ ]
-        [ div [ ] [ text "Countries" ] ]
 
 maybeList : WebData CountryList -> Html Msg
 maybeList response =
@@ -36,14 +33,7 @@ maybeList response =
 
 list : List CountryName -> Html Msg
 list countries =
-    div [ ]
-        [ ul []
-            (
-                countries
-                |> filterContinents
-                |> List.map countryListItem
-            )
-        ]
+    div [ class "list-group" ] (List.map countryListItem countries)
 
 countryListItem : CountryName -> Html Msg
 countryListItem country =
@@ -51,14 +41,5 @@ countryListItem country =
         path =
             countryPath country
     in
-        li []
-            [ a [ href path ] [ text country ] ]
-
-filterContinents : List CountryName -> List CountryName
-filterContinents countries =
-    countries
-    |> List.filter(isNotContinent)
-
-isNotContinent : CountryName -> Bool
-isNotContinent name =
-    (String.toUpper name) /= name
+        a [ class "list-group-item", href path ]
+            [ text country ]

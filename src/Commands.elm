@@ -10,8 +10,7 @@ import RemoteData
 fetchCountries : Cmd Msg
 fetchCountries =
     let
-        request = 
-        Http.request
+        request = Http.request
             { body = Http.emptyBody
             , headers = [Http.header "Accept" "application/json"]
             , method = "GET"
@@ -26,7 +25,7 @@ fetchCountries =
 
 fetchCountriesUrl : String
 fetchCountriesUrl = 
-    "http://api.population.io/1.0/countries"
+    "http://api.population.io/1.0/countries/"
 
 countriesDecoder : Decode.Decoder CountryList
 countriesDecoder =

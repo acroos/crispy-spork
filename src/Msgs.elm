@@ -8,3 +8,4 @@ type Msg
     = OnFetchCountries (WebData CountryList)
     | OnFetchPopulationData (WebData (List PopulationData))
     | OnLocationChange Location
+    | ToggleCountryView Bool

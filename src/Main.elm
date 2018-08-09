@@ -15,7 +15,7 @@ init location =
             Routing.parseLocation location
         currentCommand =
             case currentRoute of
-                Models.PopulationRoute country ->
+                Models.CountryRoute country ->
                     fetchPopulationForCountry country
 
                 Models.CountriesRoute ->

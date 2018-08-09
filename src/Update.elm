@@ -19,3 +19,6 @@ update msg model =
                     parseLocation location
             in
                 ( { model | route = newRoute },  Cmd.none)
+        
+        Msgs.ToggleCountryView shouldShowGraph ->
+            ( { model | showGraph = shouldShowGraph }, Cmd.none)
