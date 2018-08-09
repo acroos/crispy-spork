@@ -1,4 +1,13 @@
 language: node_js
+before_install:
+  - |
+  if [ ! -d sysconfcpus/bin ]; then
+    git clone https://github.com/obmarg/libsysconfcpus.git;
+    cd libsysconfcpus;
+    ./configure --prefix=$TRAVIS_BUILD_DIR/sysconfcpus;
+    make && make install;
+    cd ..;
+  fi
 cache:
   directories:
     - elm-stuff/build-artifacts
@@ -6,7 +15,7 @@ cache:
     - test/elm-stuff/build-artifacts
     - test/elm-stuff/packages
 script: 
-  - yarn build
+  - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 yarn build
 deploy:
   provider: elasticbeanstalk
   access_key_id: "CXOJpVLvR3oyV26BpZ8mP6QfYBkCIUJJ/XPUQrOsEgU0mD0VkAKITSx5VPKDmYEh2HcyS8wKcYuIklilpK78fdIJAyUMYQHb5Gofvl2SQUjuk5tdLARpdoE1xVw5LJgsfIy/+qFU8vdHeiuHPTtRHsTr5InSqBMAO24CZtCAEgUoiWnIliebSWpsxY5do/ZYlIcOsKRez17r8YdcCbHSeyC+Tv8UHCvqVyilYdL1pwfISwYuTNN3t5VpuWglnkiHIcfk8GbEh2PxWqX6kxID63vaebYk6RrVphVTUk9HRSbiToLh2T3TdbOF8sukWsX8HahWWhxyiMzRffsUzwFhpi7eC+gOxIPigzOvpjsWZzUxrWtVbGRkxkW9nsmNX4wMcLZj8msKqIo3okg6/YPzEn5IBC3ACxPzXH1MlBvrZK0OSW0AVgXd1Ca5LpCxU2IXDjgzNMFV2W48z3qTY7uoRTE2FUz+mt5nmZTHmhZtLkobJ1PRQ66Ui/f/cpoiL1y/WWfIJ9HfG94AUoLQK1+RpR1g+VY1sa2rJNnTU24hQWc7n5uZZDBDsBgY148pooYuChLeXHhn3KUJClhwugmvb5Hl2b6VnlbBIOp63qZBDg0wTejxe/8WuZZ4SItLaScr9dv+rMR1r1OI77rnnB6Bq2Rjr7NZBW0XtAf1m5fgf4M="
