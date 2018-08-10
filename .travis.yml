@@ -9,6 +9,8 @@ cache:
     - test/elm-stuff/packages
 script: 
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 yarn build
+before_deploy:
+  - zip -r crispy-spork-$(git rev-parse HEAD).zip dist server.js package.json
 deploy:
   skip_cleanup: true
   provider: elasticbeanstalk
@@ -18,6 +20,7 @@ deploy:
   region: eu-west-1
   app: crispy-spork
   env: staging
+  zip_file: crispy-spork-$(git rev-parse HEAD).zip
   bucket_name: elasticbeanstalk-eu-west-1-836966196605
   on:
     branch: staging
