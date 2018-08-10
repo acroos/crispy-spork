@@ -1,4 +1,4 @@
-module Countries.List exposing (..)
+module Countries.List exposing (view)
 
 import Html exposing (..)
 import Html.Attributes exposing (class, href)
@@ -6,15 +6,9 @@ import Msgs exposing (Msg)
 import Models exposing (CountryList, CountryName)
 import RemoteData exposing (WebData)
 import Routing exposing (countryPath)
-import Shared.Views.Container exposing (container)
-import Shared.Views.Nav exposing (navbar)
 
-view : WebData CountryList -> Html Msg
-view response =
-    div []
-        [ navbar
-        , container [ maybeList response ]
-        ]
+view : WebData CountryList -> List (Html Msg)
+view response = [ maybeList response ]
 
 maybeList : WebData CountryList -> Html Msg
 maybeList response =

@@ -3,7 +3,7 @@ module Shared.Views.Nav exposing (navbar)
 import Html exposing (..)
 import Html.Attributes exposing (attribute, class, href, type_)
 import Msgs exposing (Msg)
-import Routing exposing (countriesPath)
+import Routing exposing (countriesPath, lettersPath)
 
 navbar : Html Msg
 navbar =
@@ -19,9 +19,8 @@ menu : Html Msg
 menu = 
     div [ class "collapse navbar-collapse" ]
     [ ul [ class "navbar-nav" ]
-        [ (navItem "Countries List" countriesPath)
-        , (navItem "Page 2" "#")
-        , (navItem "Page 3" "#")
+        [ (navItem "Countries" countriesPath)
+        , (navItem "Letters" lettersPath)
         ]
     ]
 

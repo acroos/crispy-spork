@@ -4,6 +4,7 @@ import Commands exposing (fetchCountries, fetchPopulationForCountry)
 import Models exposing (Model, initialModel)
 import Msgs exposing (Msg)
 import Navigation exposing (Location)
+import Ports exposing (bodyKeyPress)
 import Routing
 import Update exposing (update)
 import View exposing (view)
@@ -20,13 +21,15 @@ init location =
 
                 Models.CountriesRoute ->
                     fetchCountries
+
+                _ -> 
+                    Cmd.none
     in
         ( initialModel currentRoute, currentCommand )
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Sub.none
-
+    bodyKeyPress Msgs.OnBodyKeyPress
 
 -- MAIN
 

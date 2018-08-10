@@ -12,6 +12,8 @@ matchers =
         , map CountriesRoute (s "countries")
         , map CountriesRoute (s "countries/")
         , map CountryRoute (s "countries" </> string)
+        , map LettersRoute (s "letters")
+        , map LettersRoute (s "letters/")
         ]
 
 parseLocation : Location -> Route
@@ -24,10 +26,10 @@ parseLocation location =
             CountriesRoute
 
 countriesPath : String
-countriesPath =
-    "/countries"
+countriesPath = "/countries"
 
 countryPath : CountryName -> String
-countryPath name =
-    "/countries/" ++ (encodeUri name)
-    
+countryPath name = "/countries/" ++ (encodeUri name)
+
+lettersPath : String
+lettersPath = "/letters"

@@ -7,6 +7,7 @@ type alias Model =
     , populationData : WebData (List PopulationData)
     , route : Route
     , showGraph : Bool
+    , accumulatedKeyStrokes : List Int
     }
 
 initialModel : Route -> Model
@@ -15,6 +16,7 @@ initialModel route =
     , populationData = RemoteData.Loading
     , route = route
     , showGraph = True
+    , accumulatedKeyStrokes = []
     }
 
 type alias CountryName =
@@ -37,3 +39,4 @@ type alias PopulationData =
 type Route
     = CountriesRoute
     | CountryRoute CountryName
+    | LettersRoute

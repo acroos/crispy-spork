@@ -1,4 +1,4 @@
-module Countries.Show exposing (..)
+module Countries.Show exposing (view)
 
 import Countries.Graph exposing (maybeGraph)
 import Countries.Table exposing (maybeTable)
@@ -8,15 +8,9 @@ import Html.Events exposing (onClick)
 import Models exposing (PopulationData)
 import Msgs exposing (Msg)
 import RemoteData exposing (WebData)
-import Shared.Views.Container exposing (container)
-import Shared.Views.Nav exposing (navbar)
 
-view : WebData (List PopulationData) -> Bool -> Html Msg
-view data showGraph =
-    div [ ]
-        [ navbar
-        , container [ (toggleViewButton showGraph), (dataView data showGraph) ]
-        ]
+view : WebData (List PopulationData) -> Bool -> List (Html Msg)
+view data showGraph =  [ (toggleViewButton showGraph), (dataView data showGraph) ]
 
 toggleViewButton : Bool -> Html Msg
 toggleViewButton showGraph =

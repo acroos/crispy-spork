@@ -9,3 +9,4 @@ type Msg
     | OnFetchPopulationData (WebData (List PopulationData))
     | OnLocationChange Location
     | ToggleCountryView Bool
+    | OnBodyKeyPress Int

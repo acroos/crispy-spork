@@ -11,14 +11,20 @@ update msg model =
             ( { model | countries = response }, Cmd.none )
 
         Msgs.OnFetchPopulationData response ->
-            ( { model | populationData = response }, Cmd.none)
+            ( { model | populationData = response }, Cmd.none )
 
         Msgs.OnLocationChange location ->
             let
                 newRoute = 
                     parseLocation location
             in
-                ( { model | route = newRoute },  Cmd.none)
+                ( { model | route = newRoute },  Cmd.none )
         
         Msgs.ToggleCountryView shouldShowGraph ->
-            ( { model | showGraph = shouldShowGraph }, Cmd.none)
+            ( { model | showGraph = shouldShowGraph }, Cmd.none )
+
+        Msgs.OnBodyKeyPress keycode ->
+            let
+                newLetters = keycode :: model.accumulatedKeyStrokes
+            in
+                ( { model | accumulatedKeyStrokes = newLetters }, Cmd.none )
