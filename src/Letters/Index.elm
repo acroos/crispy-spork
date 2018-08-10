@@ -1,5 +1,6 @@
 module Letters.Index exposing (..)
 
+import Char
 import Html exposing (..)
 import Html.Attributes exposing (class, style, attribute)
 import Shared.Utils.ListUtils exposing (getOrDefault)
@@ -15,7 +16,9 @@ view letters =
         if letterCount <= 150 then
             [ jumbotron letterCount ]
         else
-            [ graph letters ]
+            [ graph letters
+            , Html.text (toText letters)
+            ]
 
 jumbotron : Int -> Html Msg
 jumbotron letterCount  =
@@ -96,3 +99,10 @@ circleDataToFillColor circleX circleY circleR =
     "rgb(" ++ (toString circleX) ++ 
     ", " ++ (toString circleY) ++ 
     ", " ++ (toString circleR) ++ ")"
+
+toText : List Int -> String
+toText letters =
+    letters
+    |> List.map Char.fromCode
+    |> String.fromList
+    |> String.reverse
