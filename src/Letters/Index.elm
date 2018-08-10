@@ -72,13 +72,27 @@ circleDataPoints letters =
 letterCircle : List Int -> Svg Msg
 letterCircle circleData =
     let
-        circleX = (getOrDefault circleData 0 750)
-        circleY = (getOrDefault circleData 1 375)
-        circleR = (getOrDefault circleData 2 50)
+        rawX = (getOrDefault circleData 0 50)
+        rawY = (getOrDefault circleData 1 50)
+        rawR = (getOrDefault circleData 2 50)
     in
         circle 
-            [ cx (toString circleX)
-            , cy (toString circleY)
-            , r (toString circleR)
-            , Svg.Attributes.class "letterCircle"
+            [ cx <| toString <| codeToXPoint <| rawX
+            , cy <| toString <| codeToYPoint <| rawY
+            , r <| toString <| rawR
+            , fill (circleDataToFillColor rawX rawY rawR)
             ] []
+
+codeToXPoint : Int -> Int
+codeToXPoint code =
+    ((code - 32) * 14) + 96
+
+codeToYPoint : Int -> Int
+codeToYPoint code =
+    ((code - 32) * 6) + 96
+
+circleDataToFillColor : Int -> Int -> Int -> String
+circleDataToFillColor circleX circleY circleR =
+    "rgb(" ++ (toString circleX) ++ 
+    ", " ++ (toString circleY) ++ 
+    ", " ++ (toString circleR) ++ ")"
