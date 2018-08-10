@@ -3,8 +3,9 @@ module Letters.Index exposing (..)
 import Char
 import Html exposing (..)
 import Html.Attributes exposing (class, style, attribute)
-import Shared.Utils.ListUtils exposing (getOrDefault)
+import Shared.Utils.ListUtils exposing (partition, getOrDefault)
 import Msgs exposing (Msg)
+import Random
 import Svg exposing (..)
 import Svg.Attributes exposing (..)
 
@@ -13,71 +14,44 @@ view letters =
     let
         letterCount = (List.length letters)
     in
-        if letterCount <= 150 then
+        if letterCount < 3 then
             [ jumbotron letterCount ]
         else
-            [ graph letters
-            , Html.text (toText letters)
-            ]
+            [ graph letters ]
 
 jumbotron : Int -> Html Msg
 jumbotron letterCount  =
-    let
-        element = 
-            if letterCount == 0 then
-                zeroLettersHeader
-            else
-                progressBar letterCount
-    in
-        
     div [ Html.Attributes.class "jumbotron jumbotron-fluid" ]
-        [ element ]
+        [ h1 [ Html.Attributes.class "text-center display-3" ] [ Html.text "Type something" ] ]
 
-zeroLettersHeader : Html Msg
-zeroLettersHeader =
-    h1 [ Html.Attributes.class "text-center display-3" ]  [ Html.text "Type something" ] 
+graphWidth : Float
+graphWidth =
+    1500.0
 
-progressBar : Int -> Html Msg
-progressBar letterCount =
-    let
-        width = (toFloat letterCount) / 1.5
-    in
-        div [ Html.Attributes.class "progress" ]
-            [ div 
-                [ Html.Attributes.class "progress progress-bar-striped bg-info"
-                , Html.Attributes.style [ ("width", ((toString width) ++ "%")) ]
-                , attribute "role" "progressbar"
-                , attribute "aria-valuenow" (toString letterCount)
-                , attribute "aria-valuemin" (toString 0)
-                , attribute "aria-valuemax" (toString 150)
-                ] []
-            ]
+graphHeight : Float
+graphHeight =
+    750.0
 
 graph : List Int -> Svg Msg
 graph letters =
     let
         circleData = circleDataPoints letters
     in
-        svg [ width "1500px"
-            , height "750px"
+        svg [ width ((toString graphWidth) ++ "px")
+            , height ((toString graphHeight) ++ "px")
             ]
             (List.map letterCircle circleData)
 
 circleDataPoints : List Int -> List(List Int)
 circleDataPoints letters =
-    let
-        xs = List.take 50 letters
-        ys = List.drop 50 (List.take 100 letters)
-        ws = List.drop 100 letters
-    in
-        List.map3 (\x y w -> [x, y, w]) xs ys ws
+    partition letters 3
 
 letterCircle : List Int -> Svg Msg
 letterCircle circleData =
     let
-        rawX = (getOrDefault circleData 0 50)
-        rawY = (getOrDefault circleData 1 50)
-        rawR = (getOrDefault circleData 2 50)
+        rawX = getOrDefault circleData 0 50
+        rawY = getOrDefault circleData 1 50
+        rawR = getOrDefault circleData 2 50
     in
         circle 
             [ cx <| toString <| codeToXPoint <| rawX
@@ -86,23 +60,36 @@ letterCircle circleData =
             , fill (circleDataToFillColor rawX rawY rawR)
             ] []
 
-codeToXPoint : Int -> Int
+codeToXPoint : Int -> Float
 codeToXPoint code =
-    ((code - 32) * 14) + 96
+    randomFloatFromCode (code * code) 0.0 graphWidth
 
-codeToYPoint : Int -> Int
+codeToYPoint : Int -> Float
 codeToYPoint code =
-    ((code - 32) * 6) + 96
+    randomFloatFromCode (code * code * code) 0.0 graphHeight
+
+codeToRadius : Int -> Float
+codeToRadius code =
+    randomFloatFromCode (code // 2) 0.0 500.0
+
+randomFloatFromCode : Int -> Float -> Float -> Float
+randomFloatFromCode code min max =
+    let
+        seed = Random.initialSeed code
+    in
+        Tuple.first (Random.step (Random.float min max) seed)
+
+codeToColor : Int -> Int
+codeToColor code =
+    floor <| (randomFloatFromCode code 0.0 255.0)
+
+codeToOpacity : Int -> Float
+codeToOpacity code =
+    (randomFloatFromCode code 0.1 0.9)
 
 circleDataToFillColor : Int -> Int -> Int -> String
 circleDataToFillColor circleX circleY circleR =
-    "rgb(" ++ (toString circleX) ++ 
-    ", " ++ (toString circleY) ++ 
-    ", " ++ (toString circleR) ++ ")"
-
-toText : List Int -> String
-toText letters =
-    letters
-    |> List.map Char.fromCode
-    |> String.fromList
-    |> String.reverse
+    "rgba(" ++ (toString (codeToColor circleX)) ++ 
+    ", " ++ (toString (codeToColor circleY)) ++ 
+    ", " ++ (toString (codeToColor circleR)) ++
+    ", " ++ (toString (codeToOpacity (circleX + circleY + circleR))) ++ ")"

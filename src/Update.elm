@@ -25,6 +25,6 @@ update msg model =
 
         Msgs.OnBodyKeyPress keycode ->
             let
-                newLetters = keycode :: model.accumulatedKeyStrokes
+                newLetters = model.accumulatedKeyStrokes ++ [keycode]
             in
                 ( { model | accumulatedKeyStrokes = newLetters }, Cmd.none )
