@@ -1,6 +1,5 @@
 module Letters.Index exposing (..)
 
-import Char
 import Html exposing (..)
 import Html.Attributes exposing (class, style, attribute)
 import Shared.Utils.ListUtils exposing (partition, getOrDefault)

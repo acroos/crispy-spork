@@ -10,6 +10,7 @@ cache:
 script: 
   - $TRAVIS_BUILD_DIR/sysconfcpus/bin/sysconfcpus -n 2 yarn build
 deploy:
+  skip_cleanup: true
   provider: elasticbeanstalk
   access_key_id: $AWS_ACCESS_KEY_ID
   secret_access_key:
@@ -19,4 +20,4 @@ deploy:
   env: staging
   bucket_name: elasticbeanstalk-eu-west-1-836966196605
   on:
-    branch: master
+    branch: staging
